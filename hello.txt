@@ -16,3 +16,4 @@ hello world ,hello GIT
 hello world ,hello GIT
 hello world ,hello GIT master test
 hello world ,hello GIT
+hello world ,hello GIT hot-fix test
