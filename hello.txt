@@ -1,6 +1,6 @@
 hello world ,hello GIT 222222
 hello world ,hello GIT 333333
-hello world ,hello GIT hot-fix
+hello world ,hello GIT 
 hello world ,hello GIT
 hello world ,hello GIT
 hello world ,hello GIT
@@ -14,5 +14,5 @@ hello world ,hello GIT
 hello world ,hello GIT
 hello world ,hello GIT
 hello world ,hello GIT
-hello world ,hello GIT
+hello world ,hello GIT master test
 hello world ,hello GIT
