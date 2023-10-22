@@ -1,0 +1,1 @@
+/usr/bin/gcc CMakeFiles/server.dir/src/epoll/server_epoll.c.o -o server 

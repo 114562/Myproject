@@ -1,0 +1,4 @@
+/home/yjx/Mine/Myproject/build/CMakeFiles/client.dir
+/home/yjx/Mine/Myproject/build/CMakeFiles/server.dir
+/home/yjx/Mine/Myproject/build/CMakeFiles/edit_cache.dir
+/home/yjx/Mine/Myproject/build/CMakeFiles/rebuild_cache.dir
