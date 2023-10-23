@@ -10,7 +10,7 @@
 #include <fstream>
 
 const std::string prefix_path = "../resources/";
-const std::string data_prefix = "../";
+const std::string data_prefix = "../DataBase/";
 
 void Order::open_and_print(const std::string path) {
     // 打开文件
@@ -109,7 +109,7 @@ void Order::_deal_tree() {
     std::string dbName = _deal_findDb(4);
     if (dbName == "") {
         if (m_db_name == "") {
-            dbName = "data";
+            dbName = "0921";
         } else {
             dbName = m_db_name;
         }
@@ -185,7 +185,7 @@ void Order::_deal_createDB() {
     // dbName = dbName.substr(idx1, idx2 - idx1 + 1);
     std::string dbName = _deal_findDb(15);
     // 创建数据库
-    std::string path = "../" + dbName;
+    std::string path = data_prefix + dbName;
 
     // 设置文件权， 这里设置为所有权限
     int status = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
@@ -220,7 +220,7 @@ void Order::_deal_dropDB() {
     // int idx2 = pos;
     // dbName = dbName.substr(idx1, idx2 - idx1 + 1);
     std::string dbName = _deal_findDb(13);
-    std::string path = "../" + dbName;
+    std::string path = data_prefix + dbName;
     int ret = access(path.c_str(), F_OK);
     if (ret == 0) {
         int status = rmdir(path.c_str());
@@ -238,7 +238,7 @@ void Order::_deal_dropDB() {
 void Order::_deal_changeDB() {
     std::string dbName = _deal_findDb(3);
     m_db_name = dbName;
-    std::string path = "../" + dbName;
+    std::string path = data_prefix + dbName;
     int ret = access(path.c_str(), F_OK);
     if (ret != 0) {
         std::cout << "数据库不存在,请重新输入!" << std::endl;
