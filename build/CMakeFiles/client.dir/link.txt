@@ -1,1 +1,0 @@
-/usr/bin/gcc CMakeFiles/client.dir/src/conc_tcp_cli_echo.c.o -o client 

@@ -117,78 +117,89 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named client
+# Target rules for targets named app
 
 # Build rule for target.
-client: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 client
-.PHONY : client
+app: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 app
+.PHONY : app
 
 # fast build rule for target.
-client/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/build
-.PHONY : client/fast
+app/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/build
+.PHONY : app/fast
 
-#=============================================================================
-# Target rules for targets named server
-
-# Build rule for target.
-server: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server
-.PHONY : server
-
-# fast build rule for target.
-server/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/build
-.PHONY : server/fast
-
-src/conc_tcp_cli_echo.o: src/conc_tcp_cli_echo.c.o
-.PHONY : src/conc_tcp_cli_echo.o
+src/mymenu.o: src/mymenu.cpp.o
+.PHONY : src/mymenu.o
 
 # target to build an object file
-src/conc_tcp_cli_echo.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/conc_tcp_cli_echo.c.o
-.PHONY : src/conc_tcp_cli_echo.c.o
+src/mymenu.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/mymenu.cpp.o
+.PHONY : src/mymenu.cpp.o
 
-src/conc_tcp_cli_echo.i: src/conc_tcp_cli_echo.c.i
-.PHONY : src/conc_tcp_cli_echo.i
+src/mymenu.i: src/mymenu.cpp.i
+.PHONY : src/mymenu.i
 
 # target to preprocess a source file
-src/conc_tcp_cli_echo.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/conc_tcp_cli_echo.c.i
-.PHONY : src/conc_tcp_cli_echo.c.i
+src/mymenu.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/mymenu.cpp.i
+.PHONY : src/mymenu.cpp.i
 
-src/conc_tcp_cli_echo.s: src/conc_tcp_cli_echo.c.s
-.PHONY : src/conc_tcp_cli_echo.s
+src/mymenu.s: src/mymenu.cpp.s
+.PHONY : src/mymenu.s
 
 # target to generate assembly for a file
-src/conc_tcp_cli_echo.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/conc_tcp_cli_echo.c.s
-.PHONY : src/conc_tcp_cli_echo.c.s
+src/mymenu.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/mymenu.cpp.s
+.PHONY : src/mymenu.cpp.s
 
-src/epoll/server_epoll.o: src/epoll/server_epoll.c.o
-.PHONY : src/epoll/server_epoll.o
+src/order.o: src/order.cpp.o
+.PHONY : src/order.o
 
 # target to build an object file
-src/epoll/server_epoll.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/src/epoll/server_epoll.c.o
-.PHONY : src/epoll/server_epoll.c.o
+src/order.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/order.cpp.o
+.PHONY : src/order.cpp.o
 
-src/epoll/server_epoll.i: src/epoll/server_epoll.c.i
-.PHONY : src/epoll/server_epoll.i
+src/order.i: src/order.cpp.i
+.PHONY : src/order.i
 
 # target to preprocess a source file
-src/epoll/server_epoll.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/src/epoll/server_epoll.c.i
-.PHONY : src/epoll/server_epoll.c.i
+src/order.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/order.cpp.i
+.PHONY : src/order.cpp.i
 
-src/epoll/server_epoll.s: src/epoll/server_epoll.c.s
-.PHONY : src/epoll/server_epoll.s
+src/order.s: src/order.cpp.s
+.PHONY : src/order.s
 
 # target to generate assembly for a file
-src/epoll/server_epoll.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/src/epoll/server_epoll.c.s
-.PHONY : src/epoll/server_epoll.c.s
+src/order.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/order.cpp.s
+.PHONY : src/order.cpp.s
+
+test/main.o: test/main.cpp.o
+.PHONY : test/main.o
+
+# target to build an object file
+test/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/test/main.cpp.o
+.PHONY : test/main.cpp.o
+
+test/main.i: test/main.cpp.i
+.PHONY : test/main.i
+
+# target to preprocess a source file
+test/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/test/main.cpp.i
+.PHONY : test/main.cpp.i
+
+test/main.s: test/main.cpp.s
+.PHONY : test/main.s
+
+# target to generate assembly for a file
+test/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/test/main.cpp.s
+.PHONY : test/main.cpp.s
 
 # Help Target
 help:
@@ -198,14 +209,16 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... client"
-	@echo "... server"
-	@echo "... src/conc_tcp_cli_echo.o"
-	@echo "... src/conc_tcp_cli_echo.i"
-	@echo "... src/conc_tcp_cli_echo.s"
-	@echo "... src/epoll/server_epoll.o"
-	@echo "... src/epoll/server_epoll.i"
-	@echo "... src/epoll/server_epoll.s"
+	@echo "... app"
+	@echo "... src/mymenu.o"
+	@echo "... src/mymenu.i"
+	@echo "... src/mymenu.s"
+	@echo "... src/order.o"
+	@echo "... src/order.i"
+	@echo "... src/order.s"
+	@echo "... test/main.o"
+	@echo "... test/main.i"
+	@echo "... test/main.s"
 .PHONY : help
 
 
