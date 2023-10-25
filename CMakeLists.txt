@@ -16,6 +16,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(app
     src/mymenu.cpp
     src/order.cpp
+    src/dml.cpp
     test/main.cpp
 )
 

@@ -7,17 +7,16 @@
  *
  * @copyright Copyright (c) 2023
  *
+ *
  */
 
+#ifndef _ORDER_H
+#define _ORDER_H
 #include <iostream>
 #include <string>
 
-/**
- * @brief 打开文件路径对应的文件,并将里面的内容答应出来，定义为externa。因为menu也需要使用
- *
- * @param path 文件对应的目录,可能是相对路径,也可能是绝对路径
- */
-extern void open_and_print(const std::string& path);
+#include "dml.h"
+
 // const std::string prefix_path = "/home/yjx/Mine/Myproject/resources/";
 class Order {
 public:
@@ -133,11 +132,16 @@ private:
     void _deal_changeDB();
 
     /**
+     * @brief 创建表
+     */
+    void _deal_createTable();
+
+    /**
      * @brief 从命令行中找到数据库的名称
      *
      * @param n 从第几位开始查找数据库名称
      */
-    std::string _deal_findDb(int n);
+    std::string _deal_findName(int n);
 
     /**
      * @brief 打印信息至屏幕
@@ -159,4 +163,8 @@ private:
      * @brief 当前使用数据库的名称
      */
     std::string m_db_name;
+
+    DML dml;
 };
+
+#endif

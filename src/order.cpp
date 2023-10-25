@@ -62,6 +62,9 @@ void Order::run() {
     case Use:
         _deal_changeDB();
         break;
+    case Create_Table:
+        _deal_createTable();
+        break;
     case Unknown:
         _deal_unknown();
         break;
@@ -83,6 +86,8 @@ Order::command_t Order::_getCommandType() {
         return command_t::Drop_Database;
     } else if (strncmp(command.c_str(), "use", 3) == 0) {
         return command_t::Use;
+    } else if (strncmp(command.c_str(), "create table", 12) == 0) {
+        return command_t::Create_Table;
     } else {
         return command_t::Unknown;
     }
@@ -106,7 +111,7 @@ void Order::_deal_tree() {
     // std::cout << "数据库的树形目录结构:" << std::endl;
     // 先完成一个简单的搜索
     // 记录数据库的名字
-    std::string dbName = _deal_findDb(4);
+    std::string dbName = _deal_findName(4);
     if (dbName == "") {
         if (m_db_name == "") {
             dbName = "0921";
@@ -183,7 +188,7 @@ void Order::_deal_createDB() {
     // }
     // int idx2 = pos;
     // dbName = dbName.substr(idx1, idx2 - idx1 + 1);
-    std::string dbName = _deal_findDb(15);
+    std::string dbName = _deal_findName(15);
     // 创建数据库
     std::string path = data_prefix + dbName;
 
@@ -219,7 +224,7 @@ void Order::_deal_dropDB() {
     // }
     // int idx2 = pos;
     // dbName = dbName.substr(idx1, idx2 - idx1 + 1);
-    std::string dbName = _deal_findDb(13);
+    std::string dbName = _deal_findName(13);
     std::string path = data_prefix + dbName;
     int ret = access(path.c_str(), F_OK);
     if (ret == 0) {
@@ -236,7 +241,7 @@ void Order::_deal_dropDB() {
 }
 
 void Order::_deal_changeDB() {
-    std::string dbName = _deal_findDb(3);
+    std::string dbName = _deal_findName(3);
     m_db_name = dbName;
     std::string path = data_prefix + dbName;
     int ret = access(path.c_str(), F_OK);
@@ -247,7 +252,11 @@ void Order::_deal_changeDB() {
     }
 }
 
-std::string Order::_deal_findDb(int n) {
+void Order::_deal_createTable() {
+    dml.deal_createTable(command, m_db_name);
+}
+
+std::string Order::_deal_findName(int n) {
     std::string dbName = command.substr(n, command.size() - n);
     int pos = 0;
     int size = dbName.size();
