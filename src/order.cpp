@@ -65,6 +65,12 @@ void Order::run() {
     case Create_Table:
         _deal_createTable();
         break;
+    case Delete:
+        _deal_deleteTable();
+        break;
+    case Insert:
+        _deal_insertTable();
+        break;
     case Unknown:
         _deal_unknown();
         break;
@@ -88,6 +94,10 @@ Order::command_t Order::_getCommandType() {
         return command_t::Use;
     } else if (strncmp(command.c_str(), "create table", 12) == 0) {
         return command_t::Create_Table;
+    } else if (strncmp(command.c_str(), "delete from", 11) == 0) {
+        return command_t::Delete;
+    } else if (strncmp(command.c_str(), "insert into", 11) == 0) {
+        return command_t::Insert;
     } else {
         return command_t::Unknown;
     }
@@ -114,6 +124,7 @@ void Order::_deal_tree() {
     std::string dbName = _deal_findName(4);
     if (dbName == "") {
         if (m_db_name == "") {
+            // 默认使用 0921
             dbName = "0921";
         } else {
             dbName = m_db_name;
@@ -254,6 +265,14 @@ void Order::_deal_changeDB() {
 
 void Order::_deal_createTable() {
     dml.deal_createTable(command, m_db_name);
+}
+
+void Order::_deal_deleteTable() {
+    dml.deal_deleteTable(command, m_db_name);
+}
+
+void Order::_deal_insertTable() {
+    dml.deal_InsertTable(command, m_db_name);
 }
 
 std::string Order::_deal_findName(int n) {

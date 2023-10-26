@@ -137,6 +137,16 @@ private:
     void _deal_createTable();
 
     /**
+     * @brief 删除表或表中数据
+     */
+    void _deal_deleteTable();
+
+    /**
+     * @brief 向表中插入数据
+     */
+    void _deal_insertTable();
+
+    /**
      * @brief 从命令行中找到数据库的名称
      *
      * @param n 从第几位开始查找数据库名称

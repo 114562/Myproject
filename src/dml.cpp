@@ -1,5 +1,9 @@
 #include "dml.h"
 
+#include <dirent.h>
+#include <unistd.h>
+
+#include <fstream>
 #include <iostream>
 #include <regex>
 #include <string>
@@ -81,4 +85,101 @@ void DML::_deal_command(std::string command, Table& table) {
     } else {
         std::cout << "字符串格式错误,请参考 create table <table-name> (<column> <type> [primary],...)" << std::endl;
     }
+}
+
+void DML::deal_deleteTable(const std::string command, const std::string dbName) {
+    if (dbName == "") {
+        std::cout << "未指定数据库!" << std::endl;
+        return;
+    }
+    // 使用正则表达式取出表名 delete from student where name = "yjx";
+
+    size_t wherePos = command.find("where");
+    if (wherePos == std::string::npos) {
+        // 没有where限制符,删除整个表
+        std::string path = table_prefix + dbName + "/";
+        // 获取表名
+        std::string table_name = command.substr(12, command.size() - 12);
+        int pos = 0;
+        while (pos < table_name.size()) {
+            if (table_name[pos] != ' ') {
+                break;
+            }
+            pos++;
+        }
+        int idx1 = pos;
+        pos = table_name.size() - 1;
+        while (pos) {
+            if (table_name[pos] != ' ') {
+                break;
+            }
+            pos--;
+        }
+        int idx2 = pos;
+        table_name = table_name.substr(idx1, idx2 - idx1 + 1);
+        path = path + table_name + ".dat";
+        // std::cout << path << std::endl;
+        int ret = remove(path.c_str());
+        if (ret == 0) {
+            std::cout << table_name << "删除成功" << std::endl;
+        } else {
+            perror("删除表失败");
+        }
+    } else {
+        // 找到where,说明不是删除整个表 delete from student where id = 1;
+    }
+}
+
+void DML::deal_InsertTable(std::string command, const std::string dbName) {
+    if (dbName == "") {
+        std::cout << "未指定数据库!" << std::endl;
+        return;
+    }
+    // 清理输入，去除额外的空格和换行符
+    command = std::regex_replace(command, std::regex("\\s+"), " ");
+
+    // insert into student(1,"peter",18)
+    std::regex insertPattern("insert into ([a-zA-Z_]+)\\(([^)]+)\\)");
+    std::smatch matches;
+    if (std::regex_search(command, matches, insertPattern)) {
+        std::string tableName = matches[1];
+        // 判断表是否存在
+        std::string path = table_prefix + dbName + "/" + tableName + ".dat";
+        if (access(path.c_str(), F_OK) != 0) {
+            std::cout << dbName << "数据库中没有表" << tableName << std::endl;
+            return;
+        }
+        std::string values = matches[2];
+        // 拆分值
+        std::vector<std::string> value_Tokens;
+        std::istringstream tokenStream(values);
+        std::string token;
+        while (getline(tokenStream, token, ',')) {
+            value_Tokens.push_back(token);
+        }
+        // 插入数据
+        Table table;
+        table.data.push_back(value_Tokens);
+        _saveTableToFile(table, path);
+        std::cout << tableName << "插入数据成功" << std::endl;
+    } else {
+        // 格式错误
+        std::cout << "字符串格式错误,请参考 insert into <table-name>(<column>...)" << std::endl;
+    }
+}
+
+void DML::_saveTableToFile(Table& table, std::string path) {
+    std::ofstream outputFile(path, std::ios::app);
+    if (!outputFile.is_open()) {
+        perror("ofstream");
+        return;
+    }
+    // 写入插入信息
+    for (auto row : table.data) {
+        for (auto col : row) {
+            outputFile << col << '\t';
+        }
+        outputFile << '\n';
+    }
+    outputFile.close();
 }

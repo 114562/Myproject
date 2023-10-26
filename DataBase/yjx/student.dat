@@ -1,1 +1,4 @@
-name(string)	age(int)	
+id(int) name(string)	age(int)	
+1	"peter"	20	
+12	"杨径骁"	21	
+3	"无爱心"	20	

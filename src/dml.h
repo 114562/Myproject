@@ -52,12 +52,12 @@ public:
     /**
      * @brief 删除表
      */
-    // void deal_dropTable();
+    void deal_deleteTable(const std::string command, const std::string dbName);
 
     /**
-     * @brief 插入数据
+     * @brief 向表中插入数据
      */
-    // void _eal_InsertTable();
+    void deal_InsertTable(std::string command, const std::string dbName);
 
     /**
      * @brief 更新表中数据
@@ -65,6 +65,7 @@ public:
     // void deal_updateTable();
 private:
     void _deal_command(std::string command, Table& table);
+    void _saveTableToFile(Table& table, std::string path);
 };
 
 #endif
