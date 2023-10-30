@@ -1,1 +1,2 @@
-id(int) name(string)	age(int)	
+id(int)	name(string)	age(int)	
+1	刘波	54	

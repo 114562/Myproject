@@ -147,6 +147,11 @@ private:
     void _deal_insertTable();
 
     /**
+     * @brief 查询表中数据
+     */
+    void _deal_selectTable();
+
+    /**
      * @brief 从命令行中找到数据库的名称
      *
      * @param n 从第几位开始查找数据库名称

@@ -71,6 +71,9 @@ void Order::run() {
     case Insert:
         _deal_insertTable();
         break;
+    case Select:
+        _deal_selectTable();
+        break;
     case Unknown:
         _deal_unknown();
         break;
@@ -98,6 +101,8 @@ Order::command_t Order::_getCommandType() {
         return command_t::Delete;
     } else if (strncmp(command.c_str(), "insert into", 11) == 0) {
         return command_t::Insert;
+    } else if (strncmp(command.c_str(), "select", 6) == 0) {
+        return command_t::Select;
     } else {
         return command_t::Unknown;
     }
@@ -264,7 +269,7 @@ void Order::_deal_changeDB() {
 }
 
 void Order::_deal_createTable() {
-    dml.deal_createTable(command, m_db_name);
+    dml.deal_createTable_command(command, m_db_name);
 }
 
 void Order::_deal_deleteTable() {
@@ -272,7 +277,11 @@ void Order::_deal_deleteTable() {
 }
 
 void Order::_deal_insertTable() {
-    dml.deal_InsertTable(command, m_db_name);
+    dml.deal_InsertTable_command(command, m_db_name);
+}
+
+void Order::_deal_selectTable() {
+    dml.deal_selectTable(command, m_db_name);
 }
 
 std::string Order::_deal_findName(int n) {
