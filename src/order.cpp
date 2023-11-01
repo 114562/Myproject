@@ -74,6 +74,9 @@ void Order::run() {
     case Select:
         _deal_selectTable();
         break;
+    case Update:
+        _deal_updateTable();
+        break;
     case Unknown:
         _deal_unknown();
         break;
@@ -103,6 +106,8 @@ Order::command_t Order::_getCommandType() {
         return command_t::Insert;
     } else if (strncmp(command.c_str(), "select", 6) == 0) {
         return command_t::Select;
+    } else if (strncmp(command.c_str(), "update", 6) == 0) {
+        return command_t::Update;
     } else {
         return command_t::Unknown;
     }
@@ -304,4 +309,8 @@ std::string Order::_deal_findName(int n) {
     }
     int idx2 = pos;
     return dbName.substr(idx1, idx2 - idx1 + 1);
+}
+
+void Order::_deal_updateTable() {
+    dml.deal_updateTable(command, m_db_name);
 }

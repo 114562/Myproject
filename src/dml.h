@@ -93,6 +93,14 @@ public:
      */
     void deal_selectTable(std::string command, const std::string dbName);
 
+    /**
+     * @brief 修改表中数据
+     *
+     * @param command 输入命令
+     * @param dbName 数据库名
+     */
+    void deal_updateTable(std::string command, const std::string dbName);
+
 private:
     /**
      * @brief 创建表时处理输入语句
@@ -125,6 +133,14 @@ private:
      * @param cond 存储条件的集合
      */
     void _afterWhere(std::string command, std::map<std::string, std::string>& cond, std::vector<int>& cond_idx, std::map<std::string, int> column_idx);
+
+    /**
+     * @brief 处理set之后where之前的语句，得到键值对
+     *
+     * @param command 命令
+     * @param modify 存储要修改的列的集合
+     */
+    void _afterSet(std::string command, std::map<std::string, std::string>& modify);
 
     /**
      * @brief 处理单词的空格

@@ -142,6 +142,7 @@ void DML::deal_deleteTable(const std::string command, const std::string dbName) 
     // table_name = table_name.substr(idx1, idx2 - idx1 + 1);
 
     if (wherePos == std::string::npos) {
+        // delete from student;
         table_name = command.substr(12, command.size() - 12);
         table_name = _deal_whitespace(table_name);
         path = path + table_name + ".dat";
@@ -159,7 +160,7 @@ void DML::deal_deleteTable(const std::string command, const std::string dbName) 
         table_name = _deal_whitespace(table_name);
         path = path + table_name + ".dat";
         Table table;
-        // 存储列明的下标
+        // 存储列名的下标
         std::map<std::string, int> column_idx;
         // 将数据存储到table中
         _loadTableFromFile(table, path, column_idx);
@@ -180,6 +181,7 @@ void DML::deal_deleteTable(const std::string command, const std::string dbName) 
                 // 判断table中的这一行的值是否相等,也就是表中的值是否相等
                 if ((*iter)[idx] != excpected_val) {
                     is_valid = false;
+                    break;
                 }
             }
             // 注意:这样写是为了防止迭代器出现越界异常
@@ -194,6 +196,7 @@ void DML::deal_deleteTable(const std::string command, const std::string dbName) 
         // 删除表再重新写入一次表
         std::string delete_table = "delete from " + table_name;
         deal_deleteTable(delete_table, dbName);
+        // 在表中写入表名,表创建时候需要
         table.name = table_name;
         // 创建表
         deal_createTable_table(table, dbName);
@@ -252,6 +255,7 @@ void DML::deal_InsertTable_table(Table table, const std::string dbName) {
         std::cout << dbName << "数据库中没有表" << table.name << std::endl;
         return;
     }
+    // 将table中的表数据存储到文件中
     _saveTableToFile(table, path);
     std::cout << table.name << "插入数据成功" << std::endl;
 }
@@ -280,40 +284,216 @@ void DML::deal_selectTable(std::string command, const std::string dbName) {
     // 清理输入，去除额外的空格和换行符
     command = std::regex_replace(command, std::regex("\\s+"), " ");
     // 格式命令 select * from table;    select id from table where id = 1;
-    if (command[7] == '*') {
-        // 查询整个表
-        std::string table_name = command.substr(14, command.size() - 14);
+
+    // 判断是否有where
+    size_t wherePos = command.find("where");
+    std::string path;
+
+    if (wherePos == std::string::npos) {
+        // 没有where,查询整个表
+        size_t fromPos = command.find("from");
+
+        std::string table_name = command.substr(fromPos + 4, command.size() - fromPos + 4);
         // 获取表名
-        // int pos = 0;
-        // while (pos < table_name.size()) {
-        //     if (table_name[pos] != ' ') {
-        //         break;
-        //     }
-        //     pos++;
-        // }
-        // int idx1 = pos;
-        // pos = table_name.size() - 1;
-        // while (pos) {
-        //     if (table_name[pos] != ' ') {
-        //         break;
-        //     }
-        //     pos--;
-        // }
-        // int idx2 = pos;
-        // table_name = table_name.substr(idx1, idx2 - idx1 + 1);
         table_name = _deal_whitespace(table_name);
-        std::string path = table_prefix + dbName + "/" + table_name + ".dat";
+        path = table_prefix + dbName + "/" + table_name + ".dat";
         std::ifstream inputFile(path, std::ios::binary);
         if (!inputFile.is_open()) {
             perror("ifstream");
             exit(1);
         }
-        std::string line;
-        while (getline(inputFile, line)) {
-            std::cout << line << std::endl;
+        if (command.find('*') != std::string::npos) {
+            // 查询所有列的所有行
+            std::string line;
+            while (getline(inputFile, line)) {
+                std::cout << line << std::endl;
+            }
+        } else {
+            // 查询特定列的所有行
         }
+
     } else {
-        // 有选择性的输出
+        // 有选择性的输出 select * from student where id = 1
+        size_t fromPos = command.find("from");
+        // 表名在from -- where中间
+        std::string table_name = command.substr(fromPos + 4, wherePos - fromPos - 4);
+        std::cout << "test: " << table_name << std::endl;
+        // 获取表名
+        table_name = _deal_whitespace(table_name);
+        path = table_prefix + dbName + "/" + table_name + ".dat";
+        std::ifstream input(path, std::ios::binary);
+        if (!input.is_open()) {
+            perror("ifstream");
+            exit(1);
+        }
+        Table table;
+        if (command.find('*') != std::string::npos) {
+            // 查询所有列的特定行 select * from student where id = 1
+
+            // 存储列名的下标
+            std::map<std::string, int> column_idx;
+            // 将数据存储到table中
+            _loadTableFromFile(table, path, column_idx);
+            // 记录需要判断的列名的下标
+            std::vector<int> cond_idx;
+            // 存储条件,键存储的是列名 值存储的是要求的值
+            std::map<std::string, std::string> cond;
+            _afterWhere(command, cond, cond_idx, column_idx);
+
+            // 先输出表第一行,即表的列名
+            std::string line;
+            getline(input, line);
+            std::cout << line << std::endl;
+
+            // 遍历,输出所有满足条件的行
+            for (auto iter = table.data.begin(); iter != table.data.end(); iter++) {
+                bool is_valid = true;
+                for (auto idx : cond_idx) {
+                    // 遍历限制条件
+                    std::string col_name = table.columns[idx].name;
+                    std::string excpected_val = cond[col_name];
+                    if ((*iter)[idx] != excpected_val) {
+                        is_valid = false;
+                        break;
+                    }
+                }
+                if (is_valid) {
+                    // 输出该行数据
+                    for (std::string s : (*iter)) {
+                        std::cout << s << '\t';
+                    }
+                    std::cout << std::endl;
+                }
+            }
+        } else {
+            // 查询特定列的特定行
+        }
+    }
+}
+
+void DML::deal_updateTable(std::string command, const std::string dbName) {
+    if (dbName == "") {
+        std::cout << "未指定数据库" << std::endl;
+        return;
+    }
+    // update student set name = 杨径骁 where id = 1;
+    // 获取表名
+    size_t updatePos = command.find("update");
+    size_t setPos = command.find("set");
+    if (setPos == std::string::npos) {
+        std::cout << "update 格式错误,请重新输入" << std::endl;
+        return;
+    }
+    // 获取表名
+    std::string table_name = command.substr(updatePos + 6, setPos - updatePos - 6);
+    table_name = _deal_whitespace(table_name);
+
+    // 获取表路径
+    std::string path = table_prefix + dbName + "/" + table_name + ".dat";
+
+    // table用于存储表中数据
+    Table table;
+
+    // 存储列名和对应的下标
+    std::map<std::string, int> column_idx;
+    // 记录需要判断的列名的下标
+    std::vector<int> cond_idx;
+    // 存储条件,键存储的是列名 值存储的是要求的值
+    std::map<std::string, std::string> cond;
+
+    // 将表中数据加载到table中,将列名和其下标加载到column_idx中
+    _loadTableFromFile(table, path, column_idx);
+
+    // 将指令中需要满足的列名和其对应的值加载到cond中, 以及判断的列的下标加载到cond_idx中
+    _afterWhere(command, cond, cond_idx, column_idx);
+
+    // 存储需要修改的列和期望修改的值 set和where之间
+    std::map<std::string, std::string> modify;
+
+    _afterSet(command, modify);
+
+    // 遍历table.data,匹配满足的行,修改期望的列
+    for (auto iter = table.data.begin(); iter != table.data.end(); iter++) {
+        // 得到表中的每一行数据
+        // 判断是否满足条件
+        bool is_valid = true;
+        for (auto idx : cond_idx) {
+            std::string col_name = table.columns[idx].name;
+            std::string excepted_val = cond[col_name];
+            if ((*iter)[idx] != excepted_val) {
+                is_valid = false;
+                break;
+            }
+        }
+        if (is_valid) {
+            // 满足条件，修改table表中对应的值
+            for (auto mod : modify) {
+                // 要修改的列名
+                std::string col_name = mod.first;
+                // 修改的数据
+                std::string expected_val = mod.second;
+                // 得到表中对应列的下标
+                int idx = column_idx[col_name];
+                // 修改对应表中对应下标的值
+                (*iter)[idx] = expected_val;
+            }
+        }
+    }
+    // 删除表再重新插入表,更新数据
+    std::string delete_table = "delete from " + table_name;
+
+    deal_deleteTable(delete_table, dbName);
+    // 在表中写入表名,表创建时候需要
+    table.name = table_name;
+    // 创建表
+    deal_createTable_table(table, dbName);
+    // 重写数据
+    deal_InsertTable_table(table, dbName);
+    std::cout << "数据更新成功" << std::endl;
+}
+
+void DML::_afterSet(std::string command, std::map<std::string, std::string>& modify) {
+    int setPos = command.find("set");
+    int wherePos = command.find("where");
+    // 得到find结尾位置
+    setPos += 3;
+    // 获取到set之后where之前的命令
+    // update student set name = tyq where id = 3;
+    command = command.substr(setPos, wherePos - setPos);
+    // 去掉空格
+    command = _deal_whitespace(command);
+    for (int i = 0; i < command.size(); i++) {
+        if (command[i] == ' ') {
+            continue;
+        }
+        // 记录开始坐标
+        int start = i;
+        int end = i;
+        while (end < command.size()) {
+            if (command[end] == '=') {
+                // 遇到等号,截取列名
+                break;
+            }
+            end++;
+        }
+        std::string col = command.substr(start, end - start);
+        col = _deal_whitespace(col);
+        // 得到限制条件的值
+        start = end + 1;
+        end++;
+        while (end < command.size()) {
+            if (command[end] == ',') {
+                // 遇到 , 表示遇到下一个条件
+                break;
+            }
+            end++;
+        }
+        std::string val = command.substr(start, end - start);
+        val = _deal_whitespace(val);
+        // 将期望修改的键值对加入modify中
+        modify[col] = val;
+        // 接着判断
+        i = end;
     }
 }
 
@@ -392,8 +572,9 @@ void DML::_afterWhere(std::string command, std::map<std::string, std::string>& c
         }
         std::string val = command.substr(start, end - start);
         val = _deal_whitespace(val);
-        // 加入存储队列中
+        // 将限制条件加入cond存储队列中
         cond[col] = val;
+        // 将限制条件对应的列的下标加入cond_idx中,方便后续比较
         cond_idx.push_back(column_idx[col]);
         // 接着判断
         i = end;
